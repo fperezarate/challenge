@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tenpo-frontend
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://backend:8080
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - tenpo-net
+
+  backend:
+    image: tenpo-backend
+    container_name: tenpo-backend
+    build:
+      context: ../challenge-backend
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB:-tenpo}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-tenpo}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SERVER_PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tenpo-net
+
+  db:
+    image: postgres:16-alpine
+    container_name: tenpo-db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-tenpo}
+      - POSTGRES_USER=${POSTGRES_USER:-tenpo}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - tenpo-db-data:/var/lib/postgresql/data
+    networks:
+      - tenpo-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  tenpo-net:
+    driver: bridge
+
+volumes:
+  tenpo-db-data:
+    driver: local
