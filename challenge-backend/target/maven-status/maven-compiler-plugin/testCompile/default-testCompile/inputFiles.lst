@@ -1,0 +1,3 @@
+/Users/feliperez/challenge-backend/src/test/java/com/challenge/transaction/service/TransactionServiceTest.java
+/Users/feliperez/challenge-backend/src/test/java/com/challenge/transaction/exception/GlobalExceptionHandlerTest.java
+/Users/feliperez/challenge-backend/src/test/java/com/challenge/transaction/controller/TransactionControllerIntegrationTest.java

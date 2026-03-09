@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Maven: compile",
+      "type": "shell",
+      "command": "mvn compile -q",
+      "windows": {
+        "command": "mvn compile -q"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "Maven: spring-boot run",
+      "type": "shell",
+      "command": "mvn spring-boot:run -q",
+      "windows": {
+        "command": "mvn spring-boot:run -q"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Maven: clean install",
+      "type": "shell",
+      "command": "mvn clean install -q",
+      "windows": {
+        "command": "mvn clean install -q"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ]
+}

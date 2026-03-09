@@ -1,0 +1,13 @@
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/service/IdempotencyService.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/repository/TransactionRepository.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/repository/IdempotencyRepository.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/config/WebConfig.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/exception/GlobalExceptionHandler.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/entity/Transaction.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/controller/TransactionController.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/dto/CreateTransactionRequest.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/TransactionApplication.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/service/TransactionService.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/config/OpenApiConfig.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/entity/IdempotencyRecord.java
+/Users/feliperez/challenge-backend/src/main/java/com/challenge/transaction/filter/RequestIdFilter.java
