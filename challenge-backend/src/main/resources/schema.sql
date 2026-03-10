@@ -50,3 +50,15 @@ COMMENT ON TABLE idempotency_record IS 'Asociación clave de idempotencia (X-Ide
 COMMENT ON COLUMN idempotency_record.idempotency_key IS 'UUID enviado por el cliente en el header X-Idempotency-Key';
 COMMENT ON COLUMN idempotency_record.transaction_id IS 'ID de la transacción creada en la primera petición con esta clave';
 COMMENT ON COLUMN idempotency_record.created_at IS 'Momento en que se registró la clave';
+
+-- Tabla de destinatarios (lista global para transacciones)
+CREATE TABLE IF NOT EXISTS recipients (
+    id              BIGSERIAL PRIMARY KEY,
+    nombre          VARCHAR(255) NOT NULL,
+    rut             VARCHAR(20) NOT NULL,
+    numero_cuenta   VARCHAR(50) NOT NULL,
+    tipo_cuenta     VARCHAR(50) NOT NULL DEFAULT 'Tenpo',
+    email           VARCHAR(255) NOT NULL
+);
+
+COMMENT ON TABLE recipients IS 'Destinatarios para transacciones (lista global). Tipo de cuenta fijo: Tenpo';
