@@ -14,11 +14,11 @@ graph TD
     browser["Navegador Web"]
     frontend["Frontend Tenpo<br/>Next.js (React)"]
     backend["Backend Transaction API<br/>Spring Boot 3"]
-    postgres["PostgreSQL<br/>DB Transacciones"]
+    postgres["PostgreSQL<br/>DB Transacciones y Destinatarios"]
 
     actorTenpista -->|Opera la app| browser
     browser -->|HTTP/HTTPS| frontend
-    frontend -->|"REST JSON /transaction<br/>X-Request-ID, X-Idempotency-Key"| backend
+    frontend -->|"REST JSON /transaction, /recipient<br/>X-Request-ID, X-Idempotency-Key (solo /transaction)"| backend
     backend -->|"JPA / JDBC"| postgres
 ```
 
@@ -41,19 +41,19 @@ graph TD
     end
 
     subgraph tenpo_backend["Backend Transaction API<br/>Container: Spring Boot 3"]
-        restApi["Controladores /transaction<br/>Spring Web MVC"]
-        domainServices["Servicios de dominio<br/>TransactionService, IdempotencyService"]
-        persistence["Persistencia JPA<br/>Transaction, IdempotencyRecord"]
+        restApi["Controladores /transaction, /recipient<br/>Spring Web MVC"]
+        domainServices["Servicios de dominio<br/>TransactionService, RecipientService, IdempotencyService"]
+        persistence["Persistencia JPA<br/>Transaction, Recipient, IdempotencyRecord"]
         logging["Infra de logging<br/>RequestIdFilter + Logback (MDC)"]
     end
 
     subgraph data["Data Store"]
-        db["PostgreSQL<br/>Schema: transactions, idempotency_record"]
+        db["PostgreSQL<br/>Schema: transactions, recipients, idempotency_record"]
     end
 
     browserC -->|"HTTP/HTTPS"| uiApp
     uiApp -->|"Axios + React Query"| httpClient
-    httpClient -->|"REST JSON /transaction<br/>X-Request-ID, X-Idempotency-Key"| restApi
+    httpClient -->|"REST JSON /transaction, /recipient<br/>X-Request-ID, X-Idempotency-Key (solo /transaction)"| restApi
     restApi -->|"Invoca"| domainServices
     domainServices -->|"JPA/Hibernate"| persistence
     persistence -->|"SQL"| db
@@ -68,24 +68,26 @@ Cuando levantas todo con Docker Compose hay tres contenedores principales:
 
 ### Guía de inicio rápido
 
-Requisitos: Docker y Docker Compose. El backend se construye desde el directorio hermano `challenge-backend` (misma carpeta padre que este repo).
+Requisitos: Docker y Docker Compose. El backend se construye desde el directorio hermano `challenge-backend` (misma carpeta padre que este repo) y el `docker-compose.yml` que orquesta **toda la solución (frontend + backend + DB)** vive dentro de `challenge-tenpo/`.
 
-1. Clonar/copiar el backend como hermano de este proyecto:
+1. Estructura esperada de carpetas:
    ```text
    parent/
-   ├── challenge-tenpo/ 
-   └── challenge-backend/
+   ├── challenge-tenpo/      # Frontend + docker-compose fullstack
+   └── challenge-backend/    # Backend Spring Boot (+ docker-compose propio opcional)
    ```
 
-2. Definir variables de entorno (contraseña de la DB):
+2. Definir variables de entorno (contraseña de la DB) dentro de `challenge-tenpo/`:
    ```bash
+   cd challenge-tenpo
    cp .env.example .env
    # Editar .env y asignar POSTGRES_PASSWORD (y opcionalmente POSTGRES_USER, POSTGRES_DB)
-   pd: Ya existe el .env para que docker funcione.
+   # pd: Ya existe el .env para que docker funcione.
    ```
 
-3. Levantar toda la pila:
+3. Levantar toda la pila (frontend + backend + PostgreSQL) desde `challenge-tenpo/`:
    ```bash
+   cd challenge-tenpo
    docker-compose up --build
    ```
 
@@ -101,16 +103,19 @@ Con los servicios arriba, la API está disponible en **http://localhost:8080**:
 |--------|----------------|-------------|
 | GET    | /transaction   | Lista todas las transacciones |
 | POST   | /transaction   | Crea una transacción. El frontend envía obligatoriamente `X-Idempotency-Key` (UUID) y `X-Request-ID`; body JSON: monto, giroComercio, nombreTenpista, fechaTransaccion. |
+| GET    | /recipient     | Lista todos los destinatarios (destinatarios Tenpo) |
+| POST   | /recipient     | Crea un destinatario. Body JSON: nombre, rut, numeroCuenta, email. El backend fija `tipoCuenta = "Tenpo"` y aplica validaciones. |
 
 Documentación interactiva (OpenAPI/Swagger): [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
 
-### Idempotencia y headers (frontend)
+### Idempotencia, destinatarios y headers (frontend)
 
 - **UUID (V4):** Se genera con `crypto.randomUUID()` por cada intención de envío (un key por clic en "Crear transacción").
-- **X-Idempotency-Key:** Se inyecta en cada POST de creación; en reintentos se reutiliza el mismo key (React Query y el hook pasan el mismo par `input` + `idempotencyKey`).
+- **X-Idempotency-Key:** Se inyecta en cada POST de creación de transacción; en reintentos se reutiliza el mismo key (React Query y el hook pasan el mismo par `input` + `idempotencyKey`).
 - **X-Request-ID:** El interceptor de Axios añade uno por request para correlación con los logs del backend.
 - **User-Agent / X-App-Version:** Enviados en todas las peticiones (versión desde `NEXT_PUBLIC_APP_VERSION` o `0.1.0`).
-- **UI:** El botón "Crear transacción" se deshabilita de inmediato (`isSubmitting` + estado local `isBusy`) para evitar doble envío.
+- **UI (transacciones):** El botón "Crear transacción" se deshabilita de inmediato (`isSubmitting` + estado local `isBusy`) para evitar doble envío.
+- **UI (destinatarios):** La vista de transacciones incluye una sección de destinatarios que permite crear y seleccionar destinatarios Tenpo (`RecipientSelector` + `RecipientForm`); el hook `useRecipients` consume `/recipient` y mantiene la lista sincronizada vía React Query.
 
 ### Decisiones técnicas
 
@@ -136,8 +141,8 @@ Para **integridad y trazabilidad** se añadió: generación de UUID en el client
 
 ## Tests
 
-- **Frontend**: `npm run test` (Jest + React Testing Library). Incluye tests del formulario de transacciones (validación, no envío con campos vacíos).
-- **Backend**: desde la raíz de `challenge-backend`, `mvn test` (tests unitarios del servicio y de integración con H2).
+- **Frontend**: `npm run test` (Jest + React Testing Library). Incluye tests del formulario de transacciones y de la funcionalidad de destinatarios (`RecipientSelector`, hook `useRecipients`).
+- **Backend**: desde la raíz de `challenge-backend`, `mvn test` (tests unitarios del servicio de transacciones y destinatarios, y tests de integración con H2 para controladores `/transaction` y `/recipient`).
 
 ---
 
