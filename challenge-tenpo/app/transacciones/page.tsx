@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
+import { RecipientSelector } from "@/app/components/RecipientSelector";
 import { TransactionForm } from "@/app/components/TransactionForm";
 import { TransactionsTable } from "@/app/components/TransactionsTable";
+import { TransactionReceiptModal } from "@/app/components/TransactionReceiptModal";
+import type { Recipient } from "@/app/types/recipient";
 import type { Transaction, TransactionInput } from "@/app/types/transaction";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRecipients } from "@/hooks/useRecipients";
 import { useTransactions } from "@/hooks/useTransactions";
 
 const PAGE_SIZE = 5;
@@ -45,6 +49,14 @@ export default function TransaccionesPage() {
     refetch,
     createTransaction,
   } = useTransactions();
+  const {
+    data: recipients,
+    isLoading: recipientsLoading,
+    createRecipient,
+  } = useRecipients();
+  const [selectedRecipient, setSelectedRecipient] = useState<Recipient | null>(null);
+  const [lastCreatedTransaction, setLastCreatedTransaction] = useState<Transaction | null>(null);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -55,7 +67,9 @@ export default function TransaccionesPage() {
     : null;
 
   const handleCreate = async (input: TransactionInput) => {
-    await createTransaction(input);
+    const created = await createTransaction(input);
+    setLastCreatedTransaction(created);
+    setIsReceiptOpen(true);
   };
 
   const filteredTransactions = useMemo(() => {
@@ -112,8 +126,18 @@ export default function TransaccionesPage() {
                 monto no puede ser negativo y la fecha no puede ser futura.
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-4 pb-6 sm:px-6 md:px-6 md:pb-8">
-              <TransactionForm onCreate={handleCreate} />
+            <CardContent className="flex flex-col gap-6 px-4 pb-6 sm:px-6 md:px-6 md:pb-8">
+              <RecipientSelector
+                recipients={recipients}
+                selectedRecipient={selectedRecipient}
+                onSelect={setSelectedRecipient}
+                onCreateRecipient={createRecipient}
+                isLoading={recipientsLoading}
+              />
+              <TransactionForm
+                onCreate={handleCreate}
+                defaultCustomerName={selectedRecipient?.nombre ?? ""}
+              />
             </CardContent>
           </Card>
 
@@ -225,6 +249,14 @@ export default function TransaccionesPage() {
           </Card>
         </section>
       </main>
+
+      {lastCreatedTransaction && (
+        <TransactionReceiptModal
+          transaction={lastCreatedTransaction}
+          open={isReceiptOpen}
+          onClose={() => setIsReceiptOpen(false)}
+        />
+      )}
     </div>
   );
 }

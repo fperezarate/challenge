@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { TransactionInput } from "@/app/types/transaction";
 import { Button } from "@/components/ui/button";
+import { BanknoteIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -46,9 +47,11 @@ type TransactionFormValues = z.infer<typeof transactionFormSchema>;
 
 type TransactionFormProps = {
   onCreate: (input: TransactionInput) => Promise<void> | void;
+  /** Nombre del Tenpista pre-rellenado al seleccionar un destinatario */
+  defaultCustomerName?: string;
 };
 
-export function TransactionForm({ onCreate }: TransactionFormProps) {
+export function TransactionForm({ onCreate, defaultCustomerName = "" }: TransactionFormProps) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -58,15 +61,20 @@ export function TransactionForm({ onCreate }: TransactionFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
       amount: "",
       merchant: "",
-      customerName: "",
+      customerName: defaultCustomerName,
       date: getNowLocalISOString(),
     },
   });
+
+  useEffect(() => {
+    setValue("customerName", defaultCustomerName);
+  }, [defaultCustomerName, setValue]);
 
   const onSubmit = async (data: TransactionFormValues) => {
     setSuccessMessage(null);
@@ -88,7 +96,7 @@ export function TransactionForm({ onCreate }: TransactionFormProps) {
       reset({
         amount: "",
         merchant: "",
-        customerName: "",
+        customerName: defaultCustomerName,
         date: getNowLocalISOString(),
       });
     } catch (error) {
@@ -222,8 +230,9 @@ export function TransactionForm({ onCreate }: TransactionFormProps) {
           type="submit"
           disabled={isSubmitting || isBusy}
           size="lg"
-          className="min-h-10 px-6 text-base"
+          className="min-h-10 px-6 text-base inline-flex items-center justify-start gap-1.5"
         >
+          <BanknoteIcon className="h-4 w-4" />
           {isSubmitting || isBusy ? "Creando..." : "Crear transacción"}
         </Button>
       </div>

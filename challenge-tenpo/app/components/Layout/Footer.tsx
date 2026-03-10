@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between">
         <Link href="/" className="flex items-center" aria-label="Tenpo - Inicio">
           <Image
-            src="/images/logo.png"
+            src="/logo.png"
             alt="Tenpo"
             width={80}
             height={24}

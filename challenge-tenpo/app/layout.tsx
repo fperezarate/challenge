@@ -14,6 +14,9 @@ const openSans = Open_Sans({
 export const metadata: Metadata = {
   title: "Tenpo — Panel de transacciones",
   description: "Registra y visualiza transacciones de tu cuenta Tenpista.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

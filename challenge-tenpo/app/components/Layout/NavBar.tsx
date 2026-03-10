@@ -26,7 +26,7 @@ export function NavBar() {
         >
           <span className="inline-flex items-center rounded-lg bg-background px-2 py-1">
             <Image
-              src="/images/logo.png"
+              src="/logo.png"
               alt="Tenpo"
               width={100}
               height={28}

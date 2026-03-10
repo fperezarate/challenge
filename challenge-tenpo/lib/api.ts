@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { Transaction, TransactionInput } from "@/app/types/transaction";
+import type { Recipient, RecipientInput } from "@/app/types/recipient";
 
 /** Formato de respuesta del backend (transaction-api) */
 type BackendTransaction = {
@@ -22,6 +23,10 @@ function createAxiosClient(baseURL: string) {
     if (typeof config.headers === "undefined") {
       config.headers = {} as typeof config.headers;
     }
+    if (typeof window !== "undefined") {
+      delete config.headers["User-Agent"];
+      delete config.headers["user-agent"];
+    }
     if (!config.headers["X-Request-ID"]) {
       config.headers["X-Request-ID"] = crypto.randomUUID();
     }
@@ -31,21 +36,27 @@ function createAxiosClient(baseURL: string) {
     if (isMutation && !config.headers["X-Idempotency-Key"]) {
       config.headers["X-Idempotency-Key"] = crypto.randomUUID();
     }
-    config.headers["User-Agent"] = `TenpoApp/${APP_VERSION}`;
-    config.headers["X-App-Version"] = APP_VERSION;
     return config;
   });
 
   return instance;
 }
 
-// Cliente para el frontend → API de Next
+// Cliente para el frontend → API de Next (navegador: no setear User-Agent, está prohibido)
 export const api = createAxiosClient("/api");
 
+// URL del backend Java (solo usada en route handlers del servidor)
+const backendBaseURL =
+  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_BASE_URL?.trim()) ||
+  "http://localhost:8081";
+
 // Cliente para Next (route handlers) → backend Java
-export const backendApi = createAxiosClient(
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8081"
-);
+export const backendApi = createAxiosClient(backendBaseURL);
+
+export const backendServerHeaders = {
+  "User-Agent": `TenpoApp/${process.env.NEXT_PUBLIC_APP_VERSION ?? "0.1.0"}`,
+  "X-App-Version": process.env.NEXT_PUBLIC_APP_VERSION ?? "0.1.0",
+};
 
 function fromBackend(raw: BackendTransaction): Transaction {
   return {
@@ -85,5 +96,19 @@ export const createTransaction = async (
     }
   );
   return fromBackend(data);
+};
+
+// --- Recipients (destinatarios) ---
+
+export const getRecipients = async (): Promise<Recipient[]> => {
+  const { data } = await api.get<Recipient[]>("/recipient");
+  return data;
+};
+
+export const createRecipient = async (
+  input: RecipientInput
+): Promise<Recipient> => {
+  const { data } = await api.post<Recipient>("/recipient", input);
+  return data;
 };
 
