@@ -9,7 +9,8 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "recipients")
-public class Recipient {
+public class Recipient
+{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,54 +31,67 @@ public class Recipient {
 	@Column(name = "email", nullable = false, length = 255)
 	private String email;
 
-	public Recipient() {
+	public Recipient()
+	{
 	}
 
-	public Long getId() {
+	public Long getId()
+	{
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Long id)
+	{
 		this.id = id;
 	}
 
-	public String getNombre() {
+	public String getNombre()
+	{
 		return nombre;
 	}
 
-	public void setNombre(String nombre) {
+	public void setNombre(String nombre)
+	{
 		this.nombre = nombre;
 	}
 
-	public String getRut() {
+	public String getRut()
+	{
 		return rut;
 	}
 
-	public void setRut(String rut) {
+	public void setRut(String rut)
+	{
 		this.rut = rut;
 	}
 
-	public String getNumeroCuenta() {
+	public String getNumeroCuenta()
+	{
 		return numeroCuenta;
 	}
 
-	public void setNumeroCuenta(String numeroCuenta) {
+	public void setNumeroCuenta(String numeroCuenta)
+	{
 		this.numeroCuenta = numeroCuenta;
 	}
 
-	public String getTipoCuenta() {
+	public String getTipoCuenta()
+	{
 		return tipoCuenta;
 	}
 
-	public void setTipoCuenta(String tipoCuenta) {
+	public void setTipoCuenta(String tipoCuenta)
+	{
 		this.tipoCuenta = tipoCuenta;
 	}
 
-	public String getEmail() {
+	public String getEmail()
+	{
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(String email)
+	{
 		this.email = email;
 	}
 }

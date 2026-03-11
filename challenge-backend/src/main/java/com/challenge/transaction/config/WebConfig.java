@@ -11,8 +11,11 @@ import java.util.List;
 
 /*
  * Configuración de CORS para permitir solicitudes desde el frontend.
+ *
  * @author Felipe Pérez
+ *
  * @version 1.0
+ *
  * @since 2026-03-09
  */
 @Configuration

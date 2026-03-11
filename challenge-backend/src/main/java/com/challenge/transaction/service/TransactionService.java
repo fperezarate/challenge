@@ -18,10 +18,9 @@ import java.util.List;
  * <p>
  * En un escenario de mayor escala y requisitos de auditoría estricta, este
  * servicio sería un buen punto para integrar un componente de auditoría de
- * negocio (p. ej. publicar eventos de dominio o persistir entradas en una
- * tabla de auditoría dedicada). Esa aproximación aumenta el volumen de
- * escritura en la base de datos y debe diseñarse teniendo en cuenta costes y
- * retención.
+ * negocio (p. ej. publicar eventos de dominio o persistir entradas en una tabla
+ * de auditoría dedicada). Esa aproximación aumenta el volumen de escritura en
+ * la base de datos y debe diseñarse teniendo en cuenta costes y retención.
  */
 @Service
 public class TransactionService
@@ -56,7 +55,9 @@ public class TransactionService
 
 	/*
 	 * Crea una nueva transacción.
+	 *
 	 * @param request La solicitud de creación de transacción.
+	 *
 	 * @return La transacción creada.
 	 */
 	private Transaction createNew(CreateTransactionRequest request)

@@ -4,12 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Entidad JPA que representa una transacción Tenpista almacenada en
- * PostgreSQL.
+ * Entidad JPA que representa una transacción Tenpista almacenada en PostgreSQL.
  * <p>
- * Se mapea a la tabla {@code transactions} y es gestionada por Spring Data
- * JPA. El campo {@link #version} está anotado con {@link Version} para
- * habilitar bloqueo optimista en escenarios de actualización concurrente.
+ * Se mapea a la tabla {@code transactions} y es gestionada por Spring Data JPA.
+ * El campo {@link #version} está anotado con {@link Version} para habilitar
+ * bloqueo optimista en escenarios de actualización concurrente.
  * <p>
  * Nota de escalabilidad: si el proyecto requiere auditoría de negocio
  * (histórico de quién creó/modificó cada transacción, desde qué origen, etc.),

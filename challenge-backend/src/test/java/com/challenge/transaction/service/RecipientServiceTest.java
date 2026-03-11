@@ -19,7 +19,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RecipientServiceTest {
+class RecipientServiceTest
+{
 
 	@Mock
 	private RecipientRepository recipientRepository;
@@ -29,11 +30,13 @@ class RecipientServiceTest {
 
 	@Nested
 	@DisplayName("findAll")
-	class FindAll {
+	class FindAll
+	{
 
 		@Test
 		@DisplayName("retorna la lista devuelta por el repositorio")
-		void returnsListFromRepository() {
+		void returnsListFromRepository()
+		{
 			List<Recipient> expected = List.of(new Recipient(), new Recipient());
 			when(recipientRepository.findAll()).thenReturn(expected);
 
@@ -46,17 +49,15 @@ class RecipientServiceTest {
 
 	@Nested
 	@DisplayName("create")
-	class Create {
+	class Create
+	{
 
 		@Test
 		@DisplayName("crea un destinatario con campos normalizados y tipo Tenpo")
-		void createsRecipientWithNormalizedFieldsAndTenpoType() {
-			CreateRecipientRequest request = new CreateRecipientRequest(
-					"  Nombre Destinatario  ",
-					"  11.111.111-1  ",
-					"  123456789  ",
-					"  correo@ejemplo.cl  "
-			);
+		void createsRecipientWithNormalizedFieldsAndTenpoType()
+		{
+			CreateRecipientRequest request = new CreateRecipientRequest("  Nombre Destinatario  ", "  11.111.111-1  ", "  123456789  ",
+					"  correo@ejemplo.cl  ");
 
 			Recipient persisted = new Recipient();
 			persisted.setId(1L);
@@ -77,4 +78,3 @@ class RecipientServiceTest {
 		}
 	}
 }
-

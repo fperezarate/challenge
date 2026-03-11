@@ -8,9 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * <p>
  * Levanta la API REST de transacciones Tenpista sobre:
  * <ul>
- *   <li>Spring Web (controladores REST bajo {@code /transaction})</li>
- *   <li>Spring Data JPA + PostgreSQL para persistencia</li>
- *   <li>Mecanismos de idempotencia, logging con UUID y bloqueo optimista</li>
+ * <li>Spring Web (controladores REST bajo {@code /transaction})</li>
+ * <li>Spring Data JPA + PostgreSQL para persistencia</li>
+ * <li>Mecanismos de idempotencia, logging con UUID y bloqueo optimista</li>
  * </ul>
  */
 @SpringBootApplication

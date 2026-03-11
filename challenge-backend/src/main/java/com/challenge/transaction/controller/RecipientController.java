@@ -13,36 +13,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /*
- * Controlador REST para el recurso de destinatarios.
- * <p>
- * Expone endpoints bajo {@code /recipient} para:
- * <ul>
- *   <li>Listar todos los destinatarios persistidos (GET).</li>
- *   <li>Crear un nuevo destinatario (POST).</li>
- * </ul>
+ * Controlador REST para el recurso de destinatarios. <p> Expone endpoints bajo
+ * {@code /recipient} para: <ul> <li>Listar todos los destinatarios persistidos
+ * (GET).</li> <li>Crear un nuevo destinatario (POST).</li> </ul>
  */
 
 @RestController
 @RequestMapping("/recipient")
-public class RecipientController {
+public class RecipientController
+{
 
 	private static final Logger log = LoggerFactory.getLogger(RecipientController.class);
 
 	private final RecipientService recipientService;
 
-	public RecipientController(RecipientService recipientService) {
+	public RecipientController(RecipientService recipientService)
+	{
 		this.recipientService = recipientService;
 	}
 
 	/*
-	 * Obtiene todos los destinatarios persistidos.
-	 * <p>
-	 * Registra eventos de debug en los logs con el {@code X-Request-ID} gestionado
-	 * por el filtro de request.
+	 * Obtiene todos los destinatarios persistidos. <p> Registra eventos de
+	 * debug en los logs con el {@code X-Request-ID} gestionado por el filtro de
+	 * request.
+	 *
 	 * @return ResponseEntity con la lista de destinatarios encontrados.
 	 */
 	@GetMapping
-	public ResponseEntity<List<Recipient>> getAll() {
+	public ResponseEntity<List<Recipient>> getAll()
+	{
 		log.debug("GET /recipient - listando destinatarios");
 		List<Recipient> recipients = recipientService.findAll();
 		log.debug("GET /recipient - encontrados {} destinatarios", recipients.size());
@@ -50,15 +49,16 @@ public class RecipientController {
 	}
 
 	/*
-	 * Crea un nuevo destinatario.
-	 * <p>
-	 * Registra eventos de info en los logs con el {@code X-Request-ID} gestionado
-	 * por el filtro de request.
+	 * Crea un nuevo destinatario. <p> Registra eventos de info en los logs con
+	 * el {@code X-Request-ID} gestionado por el filtro de request.
+	 *
 	 * @param request Datos del destinatario a crear.
+	 *
 	 * @return ResponseEntity con el destinatario creado.
 	 */
 	@PostMapping
-	public ResponseEntity<Recipient> create(@Valid @RequestBody CreateRecipientRequest request) {
+	public ResponseEntity<Recipient> create(@Valid @RequestBody CreateRecipientRequest request)
+	{
 		log.info("POST /recipient - nombre={}", request.nombre());
 		Recipient saved = recipientService.create(request);
 		log.info("POST /recipient - destinatario creado id={}", saved.getId());

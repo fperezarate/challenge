@@ -18,8 +18,11 @@ import java.util.UUID;
 
 /*
  * Filtro para agregar el header X-Request-ID a las peticiones HTTP.
+ *
  * @author Felipe Pérez
+ *
  * @version 1.0
+ *
  * @since 2026-03-09
  */
 @Component

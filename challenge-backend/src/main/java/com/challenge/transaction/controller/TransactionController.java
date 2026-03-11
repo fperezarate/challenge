@@ -17,9 +17,9 @@ import java.util.List;
  * <p>
  * Expone endpoints bajo {@code /transaction} para:
  * <ul>
- *   <li>Listar todas las transacciones persistidas (GET).</li>
- *   <li>Crear una nueva transacción de forma idempotente (POST), exigiendo el
- *   header {@code X-Idempotency-Key} generado por el frontend.</li>
+ * <li>Listar todas las transacciones persistidas (GET).</li>
+ * <li>Crear una nueva transacción de forma idempotente (POST), exigiendo el
+ * header {@code X-Idempotency-Key} generado por el frontend.</li>
  * </ul>
  * Se apoya en {@link TransactionService} y registra eventos relevantes en los
  * logs junto al {@code X-Request-ID} gestionado por el filtro de request.
@@ -47,8 +47,9 @@ public class TransactionController
 	/**
 	 * Obtiene todas las transacciones persistidas.
 	 * <p>
-	 * Registra eventos de debug en los logs con el {@code X-Request-ID} gestionado
-	 * por el filtro de request.
+	 * Registra eventos de debug en los logs con el {@code X-Request-ID}
+	 * gestionado por el filtro de request.
+	 *
 	 * @return ResponseEntity con la lista de transacciones encontradas.
 	 */
 	@GetMapping
@@ -63,14 +64,18 @@ public class TransactionController
 	/**
 	 * Crea una nueva transacción de forma idempotente.
 	 * <p>
-	 * Registra eventos de info en los logs con el {@code X-Request-ID} gestionado
-	 * por el filtro de request.
-	 * @param idempotencyKey Clave de idempotencia generada por el frontend.
-	 * @param request Datos de la transacción a crear.
+	 * Registra eventos de info en los logs con el {@code X-Request-ID}
+	 * gestionado por el filtro de request.
+	 *
+	 * @param idempotencyKey
+	 *            Clave de idempotencia generada por el frontend.
+	 * @param request
+	 *            Datos de la transacción a crear.
 	 * @return ResponseEntity con la transacción creada o devuelta.
 	 */
 	@PostMapping
-	public ResponseEntity<?> create(@RequestHeader(value = "X-Idempotency-Key", required = false) String idempotencyKey, @Valid @RequestBody CreateTransactionRequest request)
+	public ResponseEntity<?> create(@RequestHeader(value = "X-Idempotency-Key", required = false) String idempotencyKey,
+			@Valid @RequestBody CreateTransactionRequest request)
 	{
 		if(idempotencyKey == null || idempotencyKey.isBlank())
 		{
@@ -86,16 +91,19 @@ public class TransactionController
 	}
 
 	/**
-	 * Respuesta para cuando falta el header X-Idempotency-Key.
-	 * Este record es usado como body de respuesta HTTP 400 en el caso de que el header requerido no esté presente
-	 * en la petición al crear una transacción vía POST /transaction.
-	 * 
-	 * Si la petición no incluye el header X-Idempotency-Key, el método create retorna una respuesta con status 400
-	 * y una instancia de esta clase como body. La estructura JSON será: {"message": "..."}.
+	 * Respuesta para cuando falta el header X-Idempotency-Key. Este record es
+	 * usado como body de respuesta HTTP 400 en el caso de que el header
+	 * requerido no esté presente en la petición al crear una transacción vía
+	 * POST /transaction.
 	 *
-	 * Ejemplo de uso:
-	 *   return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	 *          .body(new IdempotencyKeyMissingResponse("Header X-Idempotency-Key es obligatorio para crear transacciones."));
+	 * Si la petición no incluye el header X-Idempotency-Key, el método create
+	 * retorna una respuesta con status 400 y una instancia de esta clase como
+	 * body. La estructura JSON será: {"message": "..."}.
+	 *
+	 * Ejemplo de uso: return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	 * .body(new IdempotencyKeyMissingResponse("Header X-Idempotency-Key es
+	 * obligatorio para crear transacciones."));
 	 */
-	public record IdempotencyKeyMissingResponse(String message) { }
+	public record IdempotencyKeyMissingResponse(String message) {
+	}
 }

@@ -21,17 +21,17 @@ import java.util.stream.Collectors;
 /**
  * Manejador global de excepciones para el backend.
  * <p>
- * Captura y transforma las excepciones de validación, violación de restricciones
- * y errores no controlados en respuestas HTTP estandarizadas.
+ * Captura y transforma las excepciones de validación, violación de
+ * restricciones y errores no controlados en respuestas HTTP estandarizadas.
  * <ul>
- *   <li>Transforma {@link MethodArgumentNotValidException} en respuestas 400
- *   con detalles de error en el cuerpo.</li>
- *   <li>Transforma {@link ConstraintViolationException} en respuestas 400 con
- *   detalles de error en el cuerpo.</li>
- *   <li>Transforma {@link OptimisticLockException} en respuestas 409 con mensajes
- *   de conflicto.</li>
- *   <li>Transforma todas las excepciones no controladas en respuestas 500 con
- *   mensajes genéricos.</li>
+ * <li>Transforma {@link MethodArgumentNotValidException} en respuestas 400 con
+ * detalles de error en el cuerpo.</li>
+ * <li>Transforma {@link ConstraintViolationException} en respuestas 400 con
+ * detalles de error en el cuerpo.</li>
+ * <li>Transforma {@link OptimisticLockException} en respuestas 409 con mensajes
+ * de conflicto.</li>
+ * <li>Transforma todas las excepciones no controladas en respuestas 500 con
+ * mensajes genéricos.</li>
  * </ul>
  * Los logs incluyen el {@code X-Request-ID} para rastrear eventos entre
  * diferentes instancias del backend.

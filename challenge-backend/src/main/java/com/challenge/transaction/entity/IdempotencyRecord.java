@@ -5,8 +5,8 @@ import java.time.Instant;
 
 /**
  * Entidad JPA que almacena la asociación entre una clave de idempotencia
- * ({@code X-Idempotency-Key}) y la transacción creada la primera vez que se
- * usó esa clave.
+ * ({@code X-Idempotency-Key}) y la transacción creada la primera vez que se usó
+ * esa clave.
  * <p>
  * Permite que el servicio de idempotencia resuelva reintentos devolviendo la
  * misma transacción sin duplicar registros en la base de datos.

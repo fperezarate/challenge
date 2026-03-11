@@ -5,11 +5,11 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
  * Configuración de OpenAPI para la API REST de transacciones.
  * <p>
  * Define el esquema de la API y sus endpoints.
+ *
  * @author Felipe Pérez
  * @version 1.0
  * @since 2026-03-09

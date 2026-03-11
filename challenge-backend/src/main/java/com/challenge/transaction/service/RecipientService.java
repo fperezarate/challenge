@@ -9,29 +9,33 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class RecipientService {
+public class RecipientService
+{
 
 	private static final String TIPO_CUENTA_TENPO = "Tenpo";
 
 	private final RecipientRepository recipientRepository;
 
-	public RecipientService(RecipientRepository recipientRepository) {
+	public RecipientService(RecipientRepository recipientRepository)
+	{
 		this.recipientRepository = recipientRepository;
 	}
 
 	@Transactional(readOnly = true)
-	public List<Recipient> findAll() {
+	public List<Recipient> findAll()
+	{
 		return recipientRepository.findAll();
 	}
 
 	@Transactional
-	public Recipient create(CreateRecipientRequest request) {
+	public Recipient create(CreateRecipientRequest request)
+	{
 		String normalizedRut = request.rut().trim();
 		String normalizedNumeroCuenta = request.numeroCuenta().trim();
 
-		if (recipientRepository.existsByRutAndNumeroCuenta(normalizedRut, normalizedNumeroCuenta)) {
-			throw new RecipientAlreadyExistsException(
-					"Ya existe un destinatario con este RUT y número de cuenta");
+		if(recipientRepository.existsByRutAndNumeroCuenta(normalizedRut, normalizedNumeroCuenta))
+		{
+			throw new RecipientAlreadyExistsException("Ya existe un destinatario con este RUT y número de cuenta");
 		}
 
 		Recipient recipient = new Recipient();
