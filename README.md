@@ -81,8 +81,7 @@ Requisitos: Docker y Docker Compose. El backend se construye desde el directorio
    ```bash
    cd challenge-tenpo
    cp .env.example .env
-   # Editar .env y asignar POSTGRES_PASSWORD (y opcionalmente POSTGRES_USER, POSTGRES_DB)
-   # pd: Ya existe el .env para que docker funcione.
+   # No es necesario pero puedes editar .env y asignar POSTGRES_PASSWORD (y opcionalmente POSTGRES_USER, POSTGRES_DB)
    ```
 
 3. Levantar toda la pila (frontend + backend + PostgreSQL) desde `challenge-tenpo/`:
