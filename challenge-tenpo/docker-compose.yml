@@ -5,9 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://backend:8080
     container_name: tenpo-frontend
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=http://backend:8080
       - NODE_ENV=production
     ports:
       - "3000:3000"
