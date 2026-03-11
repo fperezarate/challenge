@@ -148,7 +148,7 @@ function Home() {
                 <div className="h-44 animate-pulse rounded-lg bg-muted" />
               ) : lastFive.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
-                  Sin transacciones.{" "}
+                  No existen transacciones cargadas a la fecha.{" "}
                   <Link href="/transacciones" className="font-medium text-primary underline">
                     Crear
                   </Link>

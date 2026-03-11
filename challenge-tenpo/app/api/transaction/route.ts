@@ -6,8 +6,12 @@ export async function GET() {
     headers: backendServerHeaders,
   });
 
-  return NextResponse.json(response.data, {
-    status: response.status,
+  const hasNoContent = response.status === 204;
+  const data = hasNoContent ? [] : response.data;
+  const status = hasNoContent ? 200 : response.status;
+
+  return NextResponse.json(data, {
+    status,
   });
 }
 

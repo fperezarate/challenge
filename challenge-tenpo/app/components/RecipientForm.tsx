@@ -10,6 +10,51 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
+function normalizeRutDigits(value: string): string {
+  return value.replace(/[^0-9kK]/g, "").toUpperCase();
+}
+
+function formatRut(value: string): string {
+  const cleaned = normalizeRutDigits(value);
+  if (cleaned.length < 2) return cleaned;
+
+  const body = cleaned.slice(0, -1);
+  const dv = cleaned.slice(-1);
+
+  const reversed = body.split("").reverse().join("");
+  const chunks: string[] = [];
+  for (let i = 0; i < reversed.length; i += 3) {
+    chunks.push(reversed.slice(i, i + 3));
+  }
+  const withDots = chunks.join(".").split("").reverse().join("");
+
+  return `${withDots}-${dv}`;
+}
+
+function isValidChileanRut(value: string): boolean {
+  const cleaned = normalizeRutDigits(value);
+  if (cleaned.length < 2) return false;
+
+  const body = cleaned.slice(0, -1);
+  const dv = cleaned.slice(-1);
+
+  if (!/^\d+$/.test(body)) return false;
+
+  let sum = 0;
+  let multiplier = 2;
+
+  for (let i = body.length - 1; i >= 0; i -= 1) {
+    sum += Number(body[i]) * multiplier;
+    multiplier = multiplier === 7 ? 2 : multiplier + 1;
+  }
+
+  const remainder = 11 - (sum % 11);
+  const dvExpected =
+    remainder === 11 ? "0" : remainder === 10 ? "K" : String(remainder);
+
+  return dv === dvExpected;
+}
+
 const recipientFormSchema = z.object({
   nombre: z
     .string()
@@ -18,7 +63,12 @@ const recipientFormSchema = z.object({
   rut: z
     .string()
     .trim()
-    .min(1, "El RUT es obligatorio."),
+    .min(1, "El RUT es obligatorio.")
+    .regex(
+      /^[0-9kK]+$/,
+      "El RUT solo puede contener números y K.",
+    )
+    .refine(isValidChileanRut, "El RUT no es válido (revisa dígito verificador)."),
   numeroCuenta: z
     .string()
     .trim()
@@ -62,7 +112,7 @@ export function RecipientForm({ onCreate, onSuccess }: RecipientFormProps) {
 
     const input: RecipientInput = {
       nombre: data.nombre.trim(),
-      rut: data.rut.trim(),
+      rut: formatRut(data.rut),
       numeroCuenta: data.numeroCuenta.trim(),
       email: data.email.trim(),
     };
@@ -73,9 +123,14 @@ export function RecipientForm({ onCreate, onSuccess }: RecipientFormProps) {
       onSuccess?.();
     } catch (error) {
       console.error(error);
-      setSubmitError(
-        "Ocurrió un error al crear el destinatario. Inténtalo nuevamente."
-      );
+      const maybeAxiosError = error as { response?: { status?: number } };
+      if (maybeAxiosError.response?.status === 409) {
+        setSubmitError("Ya existe un destinatario con este RUT y número de cuenta.");
+      } else {
+        setSubmitError(
+          "Ocurrió un error al crear el destinatario. Inténtalo nuevamente."
+        );
+      }
     } finally {
       setIsBusy(false);
     }
@@ -106,9 +161,16 @@ export function RecipientForm({ onCreate, onSuccess }: RecipientFormProps) {
         <Input
           id="recipient-rut"
           type="text"
+          inputMode="numeric"
+          autoComplete="off"
           className={cn(errors.rut && "border-destructive")}
           aria-invalid={Boolean(errors.rut)}
-          {...register("rut")}
+          {...register("rut", {
+            onChange: (event) => {
+              const value = event.target.value as string;
+              event.target.value = normalizeRutDigits(value);
+            },
+          })}
         />
         {errors.rut && (
           <p className="text-sm text-destructive">{errors.rut.message}</p>

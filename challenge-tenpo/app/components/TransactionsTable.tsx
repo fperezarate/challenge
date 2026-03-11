@@ -29,7 +29,7 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
   if (transactions.length === 0) {
     return (
       <div className="mt-4 rounded-lg border border-dashed border-border bg-muted/30 px-5 py-10 text-center text-base text-muted-foreground sm:py-12 md:px-6 md:py-14">
-        Aún no hay transacciones registradas. Crea la primera usando el
+        No existen transacciones cargadas a la fecha. Crea la primera usando el
         formulario.
       </div>
     );
