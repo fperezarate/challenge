@@ -16,6 +16,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.UUID;
 
+/*
+ * Filtro para agregar el header X-Request-ID a las peticiones HTTP.
+ * @author Felipe Pérez
+ * @version 1.0
+ * @since 2026-03-09
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RequestIdFilter extends OncePerRequestFilter

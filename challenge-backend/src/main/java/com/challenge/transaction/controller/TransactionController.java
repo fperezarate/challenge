@@ -87,10 +87,15 @@ public class TransactionController
 
 	/**
 	 * Respuesta para cuando falta el header X-Idempotency-Key.
-	 * @param message Mensaje de error.
+	 * Este record es usado como body de respuesta HTTP 400 en el caso de que el header requerido no esté presente
+	 * en la petición al crear una transacción vía POST /transaction.
+	 * 
+	 * Si la petición no incluye el header X-Idempotency-Key, el método create retorna una respuesta con status 400
+	 * y una instancia de esta clase como body. La estructura JSON será: {"message": "..."}.
+	 *
+	 * Ejemplo de uso:
+	 *   return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	 *          .body(new IdempotencyKeyMissingResponse("Header X-Idempotency-Key es obligatorio para crear transacciones."));
 	 */
-	public record IdempotencyKeyMissingResponse(String message) 
-	{
-		
-	}
+	public record IdempotencyKeyMissingResponse(String message) { }
 }

@@ -54,6 +54,11 @@ public class TransactionService
 		return idempotencyService.resolve(idempotencyKey, () -> createNew(request));
 	}
 
+	/*
+	 * Crea una nueva transacción.
+	 * @param request La solicitud de creación de transacción.
+	 * @return La transacción creada.
+	 */
 	private Transaction createNew(CreateTransactionRequest request)
 	{
 		Transaction transaction = new Transaction();
