@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RecipientRepository extends JpaRepository<Recipient, Long> {
+	boolean existsByRutAndNumeroCuenta(String rut, String numeroCuenta);
 }

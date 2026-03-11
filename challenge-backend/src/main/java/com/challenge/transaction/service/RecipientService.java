@@ -26,10 +26,18 @@ public class RecipientService {
 
 	@Transactional
 	public Recipient create(CreateRecipientRequest request) {
+		String normalizedRut = request.rut().trim();
+		String normalizedNumeroCuenta = request.numeroCuenta().trim();
+
+		if (recipientRepository.existsByRutAndNumeroCuenta(normalizedRut, normalizedNumeroCuenta)) {
+			throw new RecipientAlreadyExistsException(
+					"Ya existe un destinatario con este RUT y número de cuenta");
+		}
+
 		Recipient recipient = new Recipient();
 		recipient.setNombre(request.nombre().trim());
-		recipient.setRut(request.rut().trim());
-		recipient.setNumeroCuenta(request.numeroCuenta().trim());
+		recipient.setRut(normalizedRut);
+		recipient.setNumeroCuenta(normalizedNumeroCuenta);
 		recipient.setTipoCuenta(TIPO_CUENTA_TENPO);
 		recipient.setEmail(request.email().trim());
 		return recipientRepository.save(recipient);
